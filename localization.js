@@ -85,6 +85,21 @@
       'Back': 'उनथिं', 'Restart': 'फिन जागाय', 'Moves': 'दाव', 'Matches': 'मिल', 'Time': 'सम'
     }
   };
+  const landingTranslations = {
+    hi: {
+      Login: 'लॉगिन', 'Support for Mind & Memory': 'मन और स्मृति के लिए सहायता',
+      'Your digital companion for daily cognitive care, deeply rooted in the warmth of home.': 'दैनिक संज्ञानात्मक देखभाल के लिए आपका डिजिटल साथी, घर की गर्मजोशी से जुड़ा हुआ।',
+      'Start Daily Training': 'दैनिक अभ्यास शुरू करें', 'Brain Games': 'मस्तिष्क खेल',
+      'Engaging, culturally relevant puzzles to keep the mind active and joyful.': 'मन को सक्रिय और प्रसन्न रखने वाली रोचक और सांस्कृतिक पहेलियां।',
+      'Daily Reminders': 'दैनिक अनुस्मारक', 'Gentle prompts for medication, tasks, and meals with clear visuals.': 'दवा, कार्य और भोजन के लिए स्पष्ट दृश्यों के साथ सरल अनुस्मारक।',
+      'Caregiver Connect': 'देखभालकर्ता संपर्क', 'Seamlessly share progress and stay connected with loved ones.': 'प्रगति साझा करें और प्रियजनों से जुड़े रहें।', 'Privacy Policy': 'गोपनीयता नीति'
+    },
+    as: { Login: 'লগ ইন', 'Support for Mind & Memory': 'মন আৰু স্মৃতিৰ সহায়', 'Start Daily Training': 'দৈনিক প্ৰশিক্ষণ আৰম্ভ কৰক', 'Brain Games': 'মগজুৰ খেল', 'Daily Reminders': 'দৈনিক সোঁৱৰণী', 'Caregiver Connect': 'যত্ন লওঁতাৰ সংযোগ', 'Privacy Policy': 'গোপনীয়তা নীতি' },
+    bn: { Login: 'লগইন', 'Support for Mind & Memory': 'মন ও স্মৃতির সহায়তা', 'Start Daily Training': 'দৈনিক প্রশিক্ষণ শুরু করুন', 'Brain Games': 'মস্তিষ্কের খেলা', 'Daily Reminders': 'দৈনিক অনুস্মারক', 'Caregiver Connect': 'যত্নদাতার যোগাযোগ', 'Privacy Policy': 'গোপনীয়তা নীতি' },
+    kha: { Login: 'Rung hapoh', 'Support for Mind & Memory': 'Ka jingïarap ïa ka jingmut bad ka jingkynmaw', 'Start Daily Training': 'Sdang ka jinghikai man ka sngi', 'Brain Games': 'Ki jingïalehkai jingmut', 'Daily Reminders': 'Ki jingkynmaw man ka sngi', 'Caregiver Connect': 'Ka jingïadei nongsumar', 'Privacy Policy': 'Ka polisi shimet' },
+    mni: { Login: 'লগ ইন', 'Support for Mind & Memory': 'মাইন্ড অমসুং মেমোরিগী মতম', 'Start Daily Training': 'নুমিত্তংগী তম্বা হৌ', 'Brain Games': 'মাইন্ডগী গেম', 'Daily Reminders': 'নুমিত্তংগী খঙহনবা', 'Caregiver Connect': 'শেমজিংবাগী মরী', 'Privacy Policy': 'প্রাইভেসি পলিসি' },
+    brx: { Login: 'लग इन', 'Support for Mind & Memory': 'सोनाय आरो सोलोंनायनि हेफाजाब', 'Start Daily Training': 'सानफ्रोमबो सोलोंथाय जागाय', 'Brain Games': 'सोनायनि खेल', 'Daily Reminders': 'सानफ्रोमबो सावराय', 'Caregiver Connect': 'सुस्रायगिरि जों जोगाजोग', 'Privacy Policy': 'प्राइभेसि पालिसि' }
+  };
   const originalText = new WeakMap();
 
   function currentLanguage() {
@@ -93,7 +108,7 @@
 
   function translate(value) {
     const language = currentLanguage();
-    return translations[language]?.[value] || value;
+    return translations[language]?.[value] || landingTranslations[language]?.[value] || value;
   }
 
   function applyTranslations(root = document) {
@@ -151,6 +166,15 @@
         localStorage.setItem(STORAGE_KEY, select.value);
         applyTranslations();
         window.dispatchEvent(new CustomEvent('neurosync-language-change', { detail: select.value }));
+      });
+    });
+    document.querySelectorAll('[data-language-option]').forEach((link) => {
+      if (link.dataset.languageBound) return;
+      link.dataset.languageBound = 'true';
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        localStorage.setItem(STORAGE_KEY, link.dataset.languageOption);
+        applyTranslations();
       });
     });
   }
