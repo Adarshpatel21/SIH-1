@@ -109,7 +109,13 @@
       if (!original) return;
       const translated = translate(original);
       if (translated !== original) {
-        node.textContent = node.textContent.replace(original, translated);
+        const leadingWhitespace = node.textContent.match(/^\s*/)?.[0] || '';
+        const trailingWhitespace = node.textContent.match(/\s*$/)?.[0] || '';
+        node.textContent = `${leadingWhitespace}${translated}${trailingWhitespace}`;
+      } else {
+        const leadingWhitespace = node.textContent.match(/^\s*/)?.[0] || '';
+        const trailingWhitespace = node.textContent.match(/\s*$/)?.[0] || '';
+        node.textContent = `${leadingWhitespace}${original}${trailingWhitespace}`;
       }
     });
     root.querySelectorAll('[data-i18n]').forEach((element) => {
