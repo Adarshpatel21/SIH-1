@@ -34,6 +34,7 @@
 <body class="min-h-screen">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="localization.js"></script>
   <script>
     let selectedRole = 'family';
     let isSignUp = false;
@@ -41,6 +42,58 @@
       { email: 'bhaskar@example.com', password: '123456', name: 'Bhaskar', role: 'family' },
       { email: 'doctor@example.com', password: '123456', name: 'Dr. Baruah', role: 'doctor' }
     ];
+
+    function getLoginRedirectUrl() {
+      return new URL('login.html', window.location.href).href;
+    }
+
+    async function handleGoogleLogin() {
+      if (!window.supabaseConfigured) {
+        alert('Add your Supabase URL and anon key in supabase-client.js before using Google sign-in.');
+        return;
+      }
+
+      sessionStorage.setItem('neurosyncGoogleRole', selectedRole);
+      const { error } = await neuroSyncSupabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: getLoginRedirectUrl() }
+      });
+
+      if (error) alert(`Unable to sign in with Google: ${error.message}`);
+    }
+
+    async function handleGoogleCallback() {
+      if (!window.supabaseConfigured) return;
+
+      const hasOAuthCallback = window.location.search.includes('code=') ||
+        window.location.hash.includes('access_token=');
+      if (!hasOAuthCallback && !sessionStorage.getItem('neurosyncGoogleRole')) return;
+
+      const { data, error } = await neuroSyncSupabase.auth.getSession();
+      if (error || !data.session) return;
+
+      const user = data.session.user;
+      const role = sessionStorage.getItem('neurosyncGoogleRole') || user.user_metadata?.role || 'family';
+      const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email;
+
+      localStorage.setItem('neurosyncUser', JSON.stringify({
+        name,
+        email: user.email,
+        role,
+        loginTime: new Date().toISOString()
+      }));
+      sessionStorage.removeItem('neurosyncGoogleRole');
+
+      try {
+        await saveSupabaseLogin({ ...user, user_metadata: { ...user.user_metadata, role } });
+      } catch (loginError) {
+        console.error('Could not save Google login history:', loginError);
+      }
+
+      window.location.replace(role === 'doctor' ? 'doctor-dashboard.html' : 'dashboard.html');
+    }
+
+    handleGoogleCallback();
 
     async function handleLogin(event) {
       event.preventDefault();
@@ -182,6 +235,18 @@
     <!-- Right Panel -->
     <section class="flex flex-col items-center justify-center px-6 py-12">
       <form onsubmit="handleLogin(event)" class="w-full max-w-md rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
+        <label class="mb-4 flex items-center justify-between text-sm text-stone-500" for="loginLanguage">
+          <span data-i18n="Select Language">Select Language</span>
+          <select id="loginLanguage" data-language-selector class="rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-stone-700 outline-none focus:border-clay">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="as">Assamese</option>
+            <option value="bn">Bengali</option>
+            <option value="kha">Khasi</option>
+            <option value="mni">Manipuri</option>
+            <option value="brx">Bodo</option>
+          </select>
+        </label>
         <h2 id="formTitle" class="font-display text-3xl">Welcome back</h2>
         <p id="formSubtitle" class="mt-1 text-stone-500">Sign in to continue your loved one's care journey.</p>
 
@@ -218,7 +283,7 @@
 
         <button id="submitButton" type="submit" class="mt-6 h-13 w-full rounded-xl bg-clay py-3.5 text-lg font-semibold text-white transition-colors hover:bg-[#8a5a3e]">Sign in</button>
 
-        <button type="button" class="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white font-semibold transition-colors hover:bg-stone-100">
+        <button type="button" onclick="handleGoogleLogin()" class="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-stone-200 bg-white font-semibold transition-colors hover:bg-stone-100">
           <svg class="h-5 w-5" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.5 2.6 30.1.5 24 .5 14.6.5 6.5 5.9 2.6 13.8l7.8 6c1.9-5.7 7.2-10.3 13.6-10.3z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.15-3.2-.44-4.7H24v9h12.7c-.55 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-3.9 7.2-9.8 7.2-17.2z"/><path fill="#FBBC05" d="M10.4 28.2a14.6 14.6 0 0 1 0-8.4l-7.8-6a24 24 0 0 0 0 20.4l7.8-6z"/><path fill="#34A853" d="M24 47.5c6.1 0 11.3-2 15.1-5.5l-7.3-5.7c-2 1.4-4.7 2.3-7.8 2.3-6.4 0-11.7-4.6-13.6-10.4l-7.8 6C6.5 42.1 14.6 47.5 24 47.5z"/></svg>
           Sign in with Google
         </button>
