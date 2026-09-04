@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Scores | NeuroSync</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+</head>
+<body class="min-h-screen bg-[#f9f6f0] text-stone-800">
+  <main class="mx-auto max-w-5xl px-6 py-10 lg:px-12">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-[#a66e4e]">NeuroSync</p>
+        <h1 class="mt-2 font-serif text-4xl">Game scores</h1>
+        <p class="mt-2 text-stone-500">Your completed Memory Match and Picture Recall sessions.</p>
+      </div>
+      <a href="dashboard.html" class="rounded-full bg-[#a66e4e] px-5 py-3 font-semibold text-white hover:bg-[#8a5a3e]">Back to dashboard</a>
+    </div>
+    <p id="status" class="mt-8 rounded-2xl border border-stone-200 bg-white p-5 text-stone-600">Loading scores...</p>
+    <div class="mt-5 overflow-hidden rounded-2xl border border-stone-200 bg-white">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-left text-sm">
+          <thead class="bg-[#f3e9d9] text-stone-700">
+            <tr><th class="px-5 py-4">Game</th><th class="px-5 py-4">Score</th><th class="px-5 py-4">Moves / answers</th><th class="px-5 py-4">Time</th><th class="px-5 py-4">Date</th></tr>
+          </thead>
+          <tbody id="scoreRows" class="divide-y divide-stone-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <script>
+    const statusElement = document.getElementById('status');
+    const rowsElement = document.getElementById('scoreRows');
+
+    function renderScores(scores) {
+      if (!scores.length) {
+        statusElement.textContent = 'No completed game scores yet.';
+        return;
+      }
+      statusElement.textContent = `${scores.length} completed game${scores.length === 1 ? '' : 's'}.`;
+      rowsElement.innerHTML = scores.map((score) => `
+        <tr>
+          <td class="px-5 py-4 font-semibold">${score.game_name || score.gameName || 'Game'}</td>
+          <td class="px-5 py-4">${score.score}</td>
+          <td class="px-5 py-4">${score.moves}</td>
+          <td class="px-5 py-4">${score.time_seconds ?? score.time ?? 0}s</td>
+          <td class="px-5 py-4 text-stone-500">${new Date(score.created_at || score.recordedAt).toLocaleString()}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadScores() {
+      if (window.supabaseConfigured) {
+        const { data: userResult } = await neuroSyncSupabase.auth.getUser();
+        if (userResult.user) {
+          const { data, error } = await neuroSyncSupabase
+            .from('game_scores')
+            .select('game_name, score, moves, time_seconds, created_at')
+            .order('created_at', { ascending: false });
+          if (error) {
+            statusElement.textContent = `Could not load Supabase scores: ${error.message}`;
+            return;
+          }
+          renderScores(data || []);
+          return;
+        }
+      }
+      renderScores(JSON.parse(localStorage.getItem('neurosyncGameScores') || '[]'));
+    }
+
+    loadScores();
+  </script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Today · NeuroSync Patient Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            sand: '#f3e9d9',
+            clay: '#a66e4e',
+            leaf: '#6b9b7a',
+            water: '#6fa8dc',
+          },
+          fontFamily: {
+            display: ['Fraunces', 'serif'],
+            sans: ['DM Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'DM Sans', sans-serif; background: #f9f6f0; }
+    .font-display { font-family: 'Fraunces', serif; }
+  </style>
+</head>
+<body class="min-h-screen">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <header class="border-b border-stone-200 bg-white/70 backdrop-blur">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-12">
+      <div class="flex items-center gap-3">
+        <span class="grid h-10 w-10 place-items-center rounded-full bg-clay text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></svg>
+        </span>
+        <span class="font-display text-2xl">NeuroSync</span>
+      </div>
+      <ul class="hidden items-center gap-8 text-base md:flex">
+        <li class="font-medium text-clay">Today</li>
+        <li class="text-stone-500">Activities</li>
+        <li class="text-stone-500">Care team</li>
+        <li><a href="scores.html" class="text-stone-500 hover:text-clay">Reports</a></li>
+      </ul>
+      <p id="patientGreeting" class="font-display text-lg sm:text-xl">Dear, Bhaskar</p>
+    </nav>
+  </header>
+
+  <main class="mx-auto grid max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1.6fr_1fr] lg:px-12">
+    <section class="space-y-6">
+      <!-- Hydration -->
+      <article class="rounded-3xl border border-stone-200 bg-white p-7">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <svg class="h-12 w-12 text-water" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-7.4C14.1 5.8 13.5 4 12 4s-2.1 1.8-4 3.6C6 11.1 5 13 5 15a7 7 0 0 0 7 7Z"/></svg>
+            <div>
+              <h2 class="font-display text-2xl">Hydration Vault</h2>
+              <p class="text-stone-500"><span id="glassCount">0</span> of 8 glasses</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="addGlass()" class="grid h-14 w-14 place-items-center rounded-full bg-clay text-white transition-transform hover:scale-105">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+            </button>
+            <button onclick="resetHydration()" class="rounded-full border border-stone-300 px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-100">Reset</button>
+          </div>
+        </div>
+        <div class="mt-6 h-7 w-full overflow-hidden rounded-full bg-stone-200">
+          <div id="hydrationBar" class="h-full rounded-full bg-water/70 transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </article>
+
+      <!-- Activities -->
+      <article class="rounded-3xl border border-stone-200 bg-white p-7">
+        <h2 class="font-display text-2xl">Activity</h2>
+        <div class="mt-5 grid gap-4 sm:grid-cols-3">
+          <button type="button" onclick="window.location.href='mindcard-games.html';" class="flex flex-col items-center gap-4 rounded-3xl border border-stone-200 bg-[#f3e9d9] p-7 transition-transform hover:-translate-y-1">
+            <svg class="h-14 w-14 text-clay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5V3"/><path d="M6 12a6 6 0 0 1 12 0c0 3.2-2.6 6-6 9-3.4-3-6-5.8-6-9Z"/><path d="M12 13v.01"/></svg>
+            <span class="text-lg font-medium">Mind Cards</span>
+          </button>
+          <button type="button" onclick="window.location.href='memory-match.html';" class="flex flex-col items-center gap-4 rounded-3xl border border-stone-200 bg-sand p-7 transition-transform hover:-translate-y-1">
+            <svg class="h-14 w-14 text-clay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+            <span class="text-lg font-medium">Memory Match</span>
+          </button>
+          <button type="button" onclick="window.location.href='neurosync-memory-game/neurosync-memory-game/public/index.html';" class="flex flex-col items-center gap-4 rounded-3xl border border-stone-200 bg-[#f9f6f0] p-7 transition-transform hover:-translate-y-1">
+            <svg class="h-14 w-14 text-clay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <span class="text-lg font-medium">Picture Recall</span>
+          </button>
+        </div>
+      </article>
+    </section>
+
+    <aside class="space-y-6">
+      <!-- Medication -->
+      <article class="rounded-3xl border border-stone-200 bg-white p-7">
+        <div class="flex items-center gap-3">
+          <svg class="h-10 w-10 text-clay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="M8.5 8.5 17 17"/></svg>
+          <h2 class="font-display text-2xl">Medication</h2>
+        </div>
+        <ul class="mt-5 space-y-3">
+          <li>
+            <button type="button" data-medication="Donepezil" aria-pressed="true" onclick="toggleMedication(this)" class="medication-toggle flex w-full items-center justify-between rounded-2xl bg-stone-100 px-4 py-3 text-left transition-colors hover:bg-stone-200">
+              <span><span class="block text-lg font-medium">Donepezil</span><span class="block text-sm text-stone-500">8:00 AM</span></span>
+              <span class="medication-status h-4 w-4 rounded-full bg-leaf"></span>
+            </button>
+          </li>
+          <li>
+            <button type="button" data-medication="Vitamin B12" aria-pressed="true" onclick="toggleMedication(this)" class="medication-toggle flex w-full items-center justify-between rounded-2xl bg-stone-100 px-4 py-3 text-left transition-colors hover:bg-stone-200">
+              <span><span class="block text-lg font-medium">Vitamin B12</span><span class="block text-sm text-stone-500">1:00 PM</span></span>
+              <span class="medication-status h-4 w-4 rounded-full bg-leaf"></span>
+            </button>
+          </li>
+          <li>
+            <button type="button" data-medication="Memantine" aria-pressed="false" onclick="toggleMedication(this)" class="medication-toggle flex w-full items-center justify-between rounded-2xl bg-stone-100 px-4 py-3 text-left transition-colors hover:bg-stone-200">
+              <span><span class="block text-lg font-medium">Memantine</span><span class="block text-sm text-stone-500">8:00 PM</span></span>
+              <span class="medication-status h-4 w-4 rounded-full bg-clay"></span>
+            </button>
+          </li>
+        </ul>
+      </article>
+
+      <!-- Appointment -->
+      <article class="rounded-3xl border border-stone-200 bg-[#f3e9d9] p-7">
+        <svg class="h-12 w-12 text-clay" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 10h18"/><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 14.243 12 18l-2-2-1 1"/></svg>
+        <h2 class="mt-4 font-display text-2xl">Upcoming Appointment</h2>
+        <p class="mt-2 font-display text-3xl">9 Nov 2026</p>
+        <p class="text-stone-500">Dr. Lalhmingliana · 11:30 AM</p>
+      </article>
+    </aside>
+  </main>
+
+  <footer class="border-t border-stone-200 bg-white/70">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-6 py-8 text-sm text-stone-500 lg:px-12">
+      <p>NeuroSync · Cognitive care, closer to home.</p>
+      <p>Privacy · Support · Contact</p>
+    </div>
+  </footer>
+
+  <script>
+    let glasses = Number(localStorage.getItem('neurosyncHydration') || 0);
+    const goal = 8;
+    const medicationDefaults = {
+      'Donepezil': true,
+      'Vitamin B12': true,
+      'Memantine': false
+    };
+
+    const storedUser = JSON.parse(localStorage.getItem('neurosyncUser') || '{}');
+    const nameFromEmail = (storedUser.email || '')
+      .split('@')[0]
+      .replace(/[._-]+/g, ' ')
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    const userName = storedUser.name && !storedUser.name.includes('@')
+      ? storedUser.name
+      : nameFromEmail || 'Bhaskar';
+    const nameElement = document.getElementById('patientGreeting');
+    if (nameElement) {
+      nameElement.textContent = `Dear, ${userName}`;
+    }
+
+    function updateHydration() {
+      document.getElementById('glassCount').textContent = glasses;
+      document.getElementById('hydrationBar').style.width = (glasses / goal * 100) + '%';
+    }
+
+    function syncHydration(newValue) {
+      glasses = Math.min(goal, Math.max(0, newValue));
+      localStorage.setItem('neurosyncHydration', String(glasses));
+      saveSupabaseHydration(glasses).catch((error) => console.error('Supabase hydration save failed:', error));
+    }
+
+    function addGlass() {
+      if (glasses < goal) {
+        glasses++;
+        updateHydration();
+        syncHydration(glasses);
+      }
+    }
+
+    function resetHydration() {
+      glasses = 0;
+      updateHydration();
+      syncHydration(glasses);
+    }
+
+    function updateMedicationButton(button, taken) {
+      button.setAttribute('aria-pressed', String(taken));
+      button.querySelector('.medication-status').className = `medication-status h-4 w-4 rounded-full ${taken ? 'bg-leaf' : 'bg-clay'}`;
+    }
+
+    function toggleMedication(button) {
+      const medication = button.dataset.medication;
+      const taken = button.getAttribute('aria-pressed') !== 'true';
+      const medicationState = JSON.parse(localStorage.getItem('neurosyncMedication') || '{}');
+      medicationState[medication] = taken;
+      localStorage.setItem('neurosyncMedication', JSON.stringify(medicationState));
+      saveSupabaseMedication(medication, taken).catch((error) => console.error('Supabase medication save failed:', error));
+      updateMedicationButton(button, taken);
+    }
+
+    const savedMedication = JSON.parse(localStorage.getItem('neurosyncMedication') || '{}');
+    document.querySelectorAll('.medication-toggle').forEach((button) => {
+      const medication = button.dataset.medication;
+      const taken = Object.prototype.hasOwnProperty.call(savedMedication, medication)
+        ? savedMedication[medication]
+        : medicationDefaults[medication];
+      updateMedicationButton(button, taken);
+    });
+
+    updateHydration();
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Bhaskar",
+      "email": "bhaskar@example.com",
+      "password": "123456",
+      "role": "family",
+      "patientName": "Bhaskar"
+    },
+    {
+      "id": 2,
+      "name": "Dr. Baruah",
+      "email": "doctor@example.com",
+      "password": "123456",
+      "role": "doctor"
+    }
+  ],
+  "dashboardData": {
+    "patient": {
+      "name": "Bhaskar",
+      "hydration": {
+        "current": 0,
+        "goal": 8
+      },
+      "medication": [
+        { "name": "Donepezil", "time": "8:00 AM", "done": true },
+        { "name": "Vitamin B12", "time": "1:00 PM", "done": true },
+        { "name": "Memantine", "time": "8:00 PM", "done": false }
+      ],
+      "appointment": {
+        "date": "9 Nov 2026",
+        "doctor": "Dr. Lalhmingliana",
+        "time": "11:30 AM"
+      }
+    }
+  },
+  "doctorDashboardData": {
+    "doctor": {
+      "name": "Dr. Baruah",
+      "role": "Lead Caregiver"
+    },
+    "patient": {
+      "name": "Mrs. Devi",
+      "status": "Stable",
+      "cognitiveHealth": 72,
+      "weeklyProgress": [60, 75, 65, 85, 40],
+      "recentActivity": "Memory Game Completed",
+      "recentActivityScore": "85% - Excellent"
+    },
+    "alerts": [
+      { "title": "Administer Evening Meds", "detail": "Due in 30 mins" },
+      { "title": "Hydration Check", "detail": "Overdue by 15 mins", "urgent": true }
+    ]
+  },
+  "loginHistory": [],
+  "hydrationHistory": [],
+  "gameScores": []
+}

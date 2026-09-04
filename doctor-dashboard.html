@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NeuroSync Care - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&amp;family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-container": "#fadcd2",
+                      "tertiary-container": "#645c59",
+                      "tertiary-fixed-dim": "#cfc4c0",
+                      "on-tertiary-fixed": "#201a18",
+                      "on-secondary-fixed-variant": "#56423b",
+                      "surface-tint": "#7a5649",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error": "#ffffff",
+                      "primary-fixed": "#ffdbcf",
+                      "on-secondary-fixed": "#271812",
+                      "inverse-on-surface": "#f2f0ed",
+                      "primary-container": "#795548",
+                      "on-primary-fixed": "#2e150b",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#6f5a52",
+                      "surface-variant": "#e4e2de",
+                      "tertiary": "#4c4542",
+                      "surface": "#fbf9f5",
+                      "secondary-fixed": "#fadcd2",
+                      "surface-container-high": "#eae8e4",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "primary": "#5f3e32",
+                      "secondary-fixed-dim": "#ddc1b7",
+                      "surface-dim": "#dbdad6",
+                      "outline": "#82746f",
+                      "outline-variant": "#d4c3bd",
+                      "on-tertiary-container": "#e0d5d1",
+                      "on-background": "#1b1c1a",
+                      "surface-container-low": "#f5f3ef",
+                      "on-primary-fixed-variant": "#603f33",
+                      "on-primary": "#ffffff",
+                      "on-surface": "#1b1c1a",
+                      "primary-fixed-dim": "#ebbcac",
+                      "on-secondary-container": "#766057",
+                      "surface-container": "#efeeea",
+                      "on-tertiary-fixed-variant": "#4c4542",
+                      "inverse-primary": "#ebbcac",
+                      "surface-bright": "#fbf9f5",
+                      "tertiary-fixed": "#ece0dc",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e4e2de",
+                      "on-primary-container": "#fdcdbc",
+                      "on-surface-variant": "#504440",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#30312e",
+                      "background": "#fbf9f5"
+              },
+              "borderRadius": {
+                      "DEFAULT": "1rem",
+                      "lg": "2rem",
+                      "xl": "3rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "margin-mobile": "20px",
+                      "unit": "8px",
+                      "touch-target-min": "56px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "label-lg": [
+                              "Lexend"
+                      ],
+                      "body-md": [
+                              "Lexend"
+                      ],
+                      "headline-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "body-lg": [
+                              "Lexend"
+                      ],
+                      "display-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "headline-lg-mobile": [
+                              "Bricolage Grotesque"
+                      ]
+              },
+              "fontSize": {
+                      "label-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "20px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .pattern-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v-2h20v-2H0v-2h20v-2H0V8h20V6H0V4h20V2H0V0h22v20h2V0h2v20h2V0h2v20h2V0h2v20h2V0h2v20h2v2H20v-1.5zM0 20h2v20H0V20zm4 0h2v20H4V20zm4 0h2v20H8V20zm4 0h2v20h-2V20zm4 0h2v20h-2V20zm4 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2zm0 4h20v2H20v-2z' fill='%23795548' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .soft-shadow {
+            box-shadow: 0 4px 20px rgba(121, 85, 72, 0.08);
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md antialiased pattern-overlay min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim text-primary dark:text-primary-fixed w-full top-0 sticky bg-surface-container-low dark:bg-surface-container-lowest shadow-sm shadow-[0_4px_20px_rgba(121,85,72,0.08)] z-50">
+<div class="flex justify-between items-center px-gutter py-unit max-w-7xl mx-auto">
+<div class="flex items-center gap-4">
+<img alt="Caregiver profile picture" class="w-12 h-12 rounded-full object-cover border-2 border-primary-container" data-alt="A small, circular avatar portrait of an elderly Indian woman with a warm smile, set against a light background, conveying a sense of care and trust." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-2Ri0LggbeVGj7lm03XSUSLA0ii4yOzFDeKjfv6JRhEhVWHgGbjJjrnx9qKWhM6joSb2kTOQW9TmUyCdyCIOPCXmPn72Ey4Op5_01lskNtPOLywdV0ZOzkFi8SlFIcQcrHXg_1pVp56agy0fOYjJOpmo7PioDWWlSaPSPaGR9KaH6Qjj6nROQmJLunORkBtlbG_64xqfPrJgwUFHhlRYEg35Z-U_FLFAt9OD7oKZMuLaZfqQpVOzE9Q"/>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary dark:text-primary-fixed-dim tracking-tight">NeuroSync Care</h1>
+</div>
+<button class="w-12 h-12 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-secondary-container/50 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</div>
+</header>
+<div class="flex max-w-7xl mx-auto h-full">
+<!-- NavigationDrawer (Desktop) -->
+<nav class="bg-surface-container dark:bg-surface-container-high text-primary dark:text-primary-fixed font-label-lg text-label-lg h-screen w-80 rounded-r-lg bg-surface-container-low shadow-md hidden lg:flex flex-col fixed left-0 top-0 h-full pt-24 z-40">
+<div class="px-6 pb-8 border-b border-surface-variant/50">
+<div class="flex items-center gap-4 mb-2">
+<img alt="Caregiver avatar" class="w-14 h-14 rounded-full object-cover border-2 border-surface-tint" data-alt="A small, circular avatar portrait of a professional male caregiver, wearing a neat light-colored shirt, with a welcoming expression, suitable for a healthcare dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK4CmmyIkIV4dknoyOB9-J-1NKEW8h1RYxjiLfxjEz5K4U1mHvEjFcSIL8CSQjVyPMyOlKDM5k2M4LT2KTWS7btKBXHN86YMV1nitr6OeaGkXtmlAXG7UnqVjLgic4qRKpeqdILpIXV0RL28IIbVwHTFbrjavS6TjRBf_CXFDyDbiUw27_M4sbDK0FMrEUV5XG-B9LXvvIJ3NLKGClK2qnlTLRp031Gsu21EaBuH6p7UIRsNNQtzamXQ"/>
+<div>
+<h2 id="doctorName" class="font-headline-lg text-primary text-xl font-bold">Dr. Baruah</h2>
+<p id="doctorRole" class="text-on-surface-variant text-sm">Lead Caregiver</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-6 flex flex-col gap-2">
+<a class="bg-primary text-on-primary rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 hover:bg-secondary-container/40 transition-all duration-300 ease-in-out" href="dashboard.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                    Dashboard
+                </a>
+<a class="text-on-surface-variant hover:bg-secondary-container/30 rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 hover:bg-secondary-container/40 transition-all duration-300 ease-in-out" href="dashboard.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">groups</span>
+                    Patients
+                </a>
+<a class="text-on-surface-variant hover:bg-secondary-container/30 rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 hover:bg-secondary-container/40 transition-all duration-300 ease-in-out" href="dashboard.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">warning</span>
+                    Alerts
+                </a>
+<a class="text-on-surface-variant hover:bg-secondary-container/30 rounded-full mx-2 my-1 px-4 py-3 flex items-center gap-4 hover:bg-secondary-container/40 transition-all duration-300 ease-in-out" href="dashboard.html">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">settings</span>
+                    Settings
+                </a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-1 lg:ml-80 p-margin-mobile md:p-margin-desktop pb-32 lg:pb-margin-desktop min-h-[calc(100vh-80px)]">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Profile Summary -->
+<section class="lg:col-span-12 bg-surface-container-lowest rounded-xl p-8 soft-shadow border-2 border-surface-container-high relative overflow-hidden">
+<!-- Subtle background decoration -->
+<div class="absolute right-0 top-0 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl -z-10 translate-x-1/3 -translate-y-1/3"></div>
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+<div class="flex items-center gap-6">
+<div class="w-24 h-24 rounded-full border-4 border-surface overflow-hidden soft-shadow relative">
+<img alt="Mrs. Devi Profile" class="w-full h-full object-cover" data-alt="A high-quality close-up portrait of an elderly Indian woman, Mrs. Devi, with silver hair and a serene expression, bathed in soft, warm natural light, suggesting comfort and dignity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2TVhqg4GN_Uwp8yhkfIJkN4MGj4eRvYo3YxA_Wmj59LkVIpIZ_X5bQeyhw-AtoDYrvgkmHQHzNQO1Lw1KSjGTEdhvay8qbg3tNoLzjYwE8DU936-PjUqFc57AnLXFt17i9NrH_AJFegJU7uZY1UbgJE6dxkghea6pl_VhsxOPyYFtQEJy_Mxj2xEO6T5_7lKPsb9793c4XNRgqCIbe49O1YG5jbhCkI8n9CikVl1HXjFUnLPfqFcifQ"/>
+<div class="absolute bottom-0 right-0 w-6 h-6 bg-[#4ade80] rounded-full border-2 border-surface"></div>
+</div>
+<div>
+<h2 id="patientName" class="font-display-lg text-display-lg text-on-surface mb-1">Mrs. Devi</h2>
+<p class="text-on-surface-variant font-label-lg text-label-lg flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#4ade80]"></span>
+                                    <span id="patientStatus">Status: Stable</span>
+                                </p>
+</div>
+</div>
+<div class="bg-secondary-container/30 rounded-[2rem] p-6 min-w-[200px] text-center border border-secondary-container/50">
+<p class="text-on-surface-variant font-label-lg text-label-lg mb-2 uppercase tracking-widest text-sm">Cognitive Health</p>
+<div class="flex items-baseline justify-center gap-1">
+<span id="cognitiveScore" class="font-display-lg text-[64px] font-extrabold text-primary-container leading-none">72</span>
+<span class="font-headline-lg text-headline-lg text-primary-container/70">%</span>
+</div>
+<div class="w-full bg-surface-container-highest rounded-full h-2 mt-4 overflow-hidden">
+<div class="bg-primary-container h-2 rounded-full" style="width: 72%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Weekly Progress Chart -->
+<section class="lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 soft-shadow border-2 border-surface-container-high flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-lg text-headline-lg text-on-surface">Weekly Progress</h3>
+<button class="text-primary-container hover:bg-secondary-container/20 px-4 py-2 rounded-full font-label-lg transition-colors flex items-center gap-2">
+                            Details
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<!-- Simulated Bar Chart area -->
+<div class="flex-1 flex items-end justify-between gap-2 h-64 mt-4 border-b border-surface-container-high pb-4 relative">
+<!-- Y-axis labels -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-on-surface-variant/50 text-xs py-4 -ml-6">
+<span>100</span>
+<span>75</span>
+<span>50</span>
+<span>25</span>
+<span>0</span>
+</div>
+<!-- Bars -->
+<div class="w-full flex justify-around items-end h-[200px] pl-6">
+<div class="group flex flex-col items-center gap-2 w-1/5">
+<div class="w-full bg-secondary-container rounded-t-lg h-[60%] transition-all group-hover:bg-primary-container/80 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-tint text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">60%</div>
+</div>
+<span class="text-on-surface-variant font-label-lg text-sm">Mon</span>
+</div>
+<div class="group flex flex-col items-center gap-2 w-1/5">
+<div class="w-full bg-surface-tint rounded-t-lg h-[75%] transition-all group-hover:bg-primary-container/80 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-tint text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">75%</div>
+</div>
+<span class="text-on-surface-variant font-label-lg text-sm">Tue</span>
+</div>
+<div class="group flex flex-col items-center gap-2 w-1/5">
+<div class="w-full bg-secondary-container rounded-t-lg h-[65%] transition-all group-hover:bg-primary-container/80 relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-tint text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">65%</div>
+</div>
+<span class="text-on-surface-variant font-label-lg text-sm">Wed</span>
+</div>
+<div class="group flex flex-col items-center gap-2 w-1/5">
+<div class="w-full bg-primary-container rounded-t-lg h-[85%] transition-all relative">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface-tint text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">85%</div>
+</div>
+<span class="text-on-surface font-label-lg text-sm font-bold">Thu</span>
+</div>
+<div class="group flex flex-col items-center gap-2 w-1/5">
+<div class="w-full bg-surface-container-high rounded-t-lg h-[20%] border border-dashed border-outline-variant"></div>
+<span class="text-on-surface-variant/50 font-label-lg text-sm">Fri</span>
+</div>
+</div>
+</div>
+<div class="flex justify-center gap-6 mt-6">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-primary-container"></span>
+<span class="text-sm text-on-surface-variant">Memory</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-secondary-container"></span>
+<span class="text-sm text-on-surface-variant">Attention</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-surface-tint"></span>
+<span class="text-sm text-on-surface-variant">Recall</span>
+</div>
+</div>
+</section>
+<!-- Side Panel (Activities & Alerts) -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- Alerts/Pending Tasks -->
+<section class="bg-error-container/40 rounded-xl p-6 border border-error-container relative overflow-hidden">
+<!-- Alert accent line -->
+<div class="absolute left-0 top-0 bottom-0 w-2 bg-error"></div>
+<div class="flex items-center gap-3 mb-4 pl-2">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">crisis_alert</span>
+<h3 class="font-headline-lg text-headline-lg-mobile text-on-surface">Pending Tasks</h3>
+</div>
+<ul class="flex flex-col gap-3 pl-2">
+<li class="bg-surface-container-lowest rounded-lg p-4 flex gap-4 items-start shadow-sm border border-surface-container-high min-h-[touch-target-min] cursor-pointer hover:border-error/50 transition-colors">
+<div class="w-6 h-6 rounded border-2 border-outline mt-1 flex-shrink-0 flex items-center justify-center bg-surface">
+</div>
+<div>
+<p class="font-label-lg text-on-surface">Administer Evening Meds</p>
+<p class="text-sm text-on-surface-variant">Due in 30 mins</p>
+</div>
+</li>
+<li class="bg-surface-container-lowest rounded-lg p-4 flex gap-4 items-start shadow-sm border border-surface-container-high min-h-[touch-target-min] cursor-pointer hover:border-error/50 transition-colors">
+<div class="w-6 h-6 rounded border-2 border-outline mt-1 flex-shrink-0 flex items-center justify-center bg-surface">
+</div>
+<div>
+<p class="font-label-lg text-on-surface">Hydration Check</p>
+<p class="text-sm text-error font-medium">Overdue by 15 mins</p>
+</div>
+</li>
+</ul>
+</section>
+<!-- Recent Activities -->
+<section class="bg-surface-container-lowest rounded-xl p-6 border-2 border-surface-container-high flex-1">
+<h3 class="font-headline-lg text-headline-lg-mobile text-on-surface mb-6">Recent Activities</h3>
+<div class="relative pl-6 border-l-2 border-surface-container-highest flex flex-col gap-8">
+<!-- Activity Item -->
+<div class="relative">
+<div class="absolute -left-[35px] top-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center border-4 border-surface-container-lowest">
+<span class="material-symbols-outlined text-white text-[12px]" style="font-variation-settings: 'FILL' 1;">videogame_asset</span>
+</div>
+<div>
+<p class="font-label-lg text-on-surface">Memory Game Completed</p>
+<p class="text-sm text-on-surface-variant mt-1">Score: 85% - Excellent

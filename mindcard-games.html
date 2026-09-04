@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Sequence Game - MemoryCare</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .nav-button {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-1px);
+        }
+
+        .nav-button.primary {
+            background: #f2c94c;
+            color: #111;
+        }
+
+        .nav-button.secondary {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666666;
+        }
+
+        .game-phase {
+            display: none;
+        }
+
+        .game-phase.active {
+            display: block;
+        }
+
+        /* PHASE 1: Learning Phase */
+        .learning-phase {
+            text-align: center;
+        }
+
+        .learning-instruction {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #FFD700;
+        }
+
+        .learning-instruction h3 {
+            font-size: 1.4rem;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .learning-instruction p {
+            font-size: 1.1rem;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .timer {
+            font-size: 4rem;
+            color: #FFD700;
+            font-weight: bold;
+            margin: 30px 0;
+            animation: pulse-timer 1s infinite;
+        }
+
+        @keyframes pulse-timer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse-card {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .option-card.shake {
+            animation: shake 0.3s ease-in-out, pulse-card 0.3s ease-in-out;
+        }
+
+        .flash-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+            min-height: 300px;
+        }
+
+        .flash-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #3d3d3d 100%);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+        }
+
+        .flash-card.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .flash-card.hidden {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .flash-emoji {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .flash-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        .sequence-indicator {
+            font-size: 1rem;
+            color: rgba(255, 215, 0, 0.8);
+            margin-top: 10px;
+        }
+
+        /* PHASE 2: Recall Phase */
+        .recall-phase {
+            text-align: center;
+        }
+
+        .recall-instruction {
+            background: #fff9e6;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #FFD700;
+        }
+
+        .recall-instruction h3 {
+            font-size: 1.4rem;
+            color: #000000;
+            margin-bottom: 10px;
+        }
+
+        .recall-instruction p {
+            font-size: 1.1rem;
+            color: #333333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .instruction-highlight {
+            background: #ffe8b6;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #b8860b;
+        }
+
+        .your-sequence {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #FFD700;
+            min-height: 80px;
+        }
+
+        .sequence-title {
+            font-size: 1rem;
+            color: #333333;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .sequence-display {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            min-height: 50px;
+            align-items: center;
+        }
+
+        .sequence-item {
+            background: linear-gradient(135deg, #000000 0%, #3d3d3d 100%);
+            color: #FFD700;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sequence-number {
+            background: rgba(255, 215, 0, 0.3);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .option-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .option-card {
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .option-card:hover:not(.disabled):not(.selected) {
+            background: #fff9e6;
+            border-color: #FFD700;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
+            border-color: #000000;
+            color: #000000;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .option-card.selected .option-emoji {
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .option-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .option-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .option-name {
+            font-size: 1rem;
+            font-weight: bold;
+            word-break: break-word;
+        }
+
+        /* PHASE 3: Result Phase */
+        .result-phase {
+            text-align: center;
+        }
+
+        .result-container {
+            background: #f5f5f5;
+            padding: 40px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .result-emoji {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .result-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000000;
+            margin: 20px 0;
+        }
+
+        .result-message {
+            font-size: 1.2rem;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message.success {
+            background: #d4edda;
+            border: 2px solid #FFD700;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            border: 2px solid #ff6b6b;
+            color: #721c24;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #000000 0%, #3d3d3d 100%);
+            color: #FFD700;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #1a1a1a 0%, #4d4d4d 100%);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: #FFD700;
+            color: #000000;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #FFC700;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .recall-timer {
+            font-size: 2rem;
+            color: #FFD700;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: pulse-timer 1s infinite;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        .celebration.show {
+            animation: celebrate 1s ease-out;
+        }
+
+        @keyframes celebrate {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -150%) scale(1);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .flash-cards,
+            .option-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .game-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="celebration" class="celebration"></div>
+
+    <div class="game-container">
+        <div class="header">
+            <h1>🧠 Memory Sequence Game</h1>
+            <p>Test your memory with this exciting sequence challenge!</p>
+            <p style="font-size: 1.3rem; color: #FFD700; margin-top: 15px; font-weight: bold;">Round: <span id="roundDisplay">1/5</span></p>
+        </div>
+
+        <!-- PHASE 1: Learning Phase -->
+        <div id="learningPhase" class="game-phase learning-phase">
+            <div class="learning-instruction">
+                <h3>📚 Learning Phase</h3>
+                <p>Watch carefully as cards appear in sequence. Memorize their order!</p>
+            </div>
+            <div style="font-size: 1.3rem; color: #333; margin: 20px 0;">Get ready in:</div>
+            <div class="timer" id="countdown">5</div>
+            <div class="flash-cards" id="flashCards"></div>
+        </div>
+
+        <!-- PHASE 2: Recall Phase -->
+        <div id="recallPhase" class="game-phase recall-phase">
+            <div class="recall-instruction">
+                <h3>🎯 Recall Phase</h3>
+                <p>Now it's your turn! Select the cards in the exact order you saw them.</p>
+                <p class="instruction-highlight" id="instructionText">Click the 4 cards in sequence</p>
+            </div>
+
+            <div class="recall-timer" id="recallTimer">10</div>
+
+            <div class="your-sequence">
+                <div class="sequence-title">Your Sequence:</div>
+                <div class="sequence-display" id="sequenceDisplay">
+                    <span style="color: #999;">Click cards below to start...</span>
+                </div>
+            </div>
+
+            <div class="option-cards" id="optionCards"></div>
+
+            <div id="resultMessage" class="message"></div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="clearSequence()">🔄 Clear</button>
+                <button class="btn btn-primary" id="submitBtn" onclick="checkAnswer()" disabled>✓ Submit</button>
+                <button class="btn btn-secondary" id="tryAgainBtn" onclick="tryAgain()" style="display:none;">🔁 Try Again</button>
+            </div>
+        </div>
+
+        <!-- PHASE 3: Result Phase -->
+        <div id="resultPhase" class="game-phase result-phase">
+            <div class="result-container">
+                <div class="result-emoji" id="resultEmoji">🎉</div>
+                <div class="result-text" id="resultTitle">Round <span id="roundTitle">1</span> Complete!</div>
+                <div class="result-message" id="resultDetails">Great job! You got the sequence right!</div>
+                <div style="background: white; padding: 15px; border-radius: 10px; margin-top: 15px;">
+                    <p style="font-size: 1.1rem;"><strong>Round Score:</strong> <span id="roundScore">+100</span></p>
+                    <p style="font-size: 1.1rem;"><strong>Total Score:</strong> <span id="runningScore">100</span></p>
+                    <p style="font-size: 1.1rem;"><strong>Time Taken:</strong> <span id="roundTime">0.00s</span></p>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" onclick="proceedToNextRound()">🔁 Next Round</button>
+                <button class="btn btn-primary" onclick="restartGame()">🔄 Start Over</button>
+            </div>
+        </div>
+
+        <!-- PHASE 4: Final Results Screen -->
+        <div id="finalResultsPhase" class="game-phase result-phase">
+            <div class="result-container">
+                <div class="result-emoji">🏆</div>
+                <div class="result-text">All 5 Rounds Complete!</div>
+                <div class="result-message">Congratulations on finishing all rounds!</div>
+                <div style="background: white; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <p style="font-size: 1.3rem; margin: 10px 0;"><strong>Total Score:</strong> <span id="finalScore">0</span></p>
+                    <p style="font-size: 1.3rem; margin: 10px 0;"><strong>Total Mistakes:</strong> <span id="finalMistakes">0</span></p>
+                    <p style="font-size: 1.1rem; margin-top: 20px; color: #666;">Rounds Completed: <span id="finalRounds">5/5</span></p>
+                    <p style="font-size: 1.3rem; margin: 10px 0; margin-top: 20px;"><strong>Average Time per Round:</strong> <span id="finalAvgTime">0.00s</span></p>
+                </div>
+                
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                    <h3 style="text-align: center; margin-bottom: 15px; color: #333;">⏱️ Time per Round</h3>
+                    <div id="roundTimesDisplay" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="restartGame()">🔄 Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game variables
+        const pictures = [
+            { emoji: '🍎', name: 'Apple' },
+            { emoji: '🍌', name: 'Banana' },
+            { emoji: '🍊', name: 'Orange' },
+            { emoji: '🍓', name: 'Strawberry' },
+            { emoji: '🐶', name: 'Dog' },
+            { emoji: '🐱', name: 'Cat' },
+            { emoji: '🌳', name: 'Tree' },
+            { emoji: '🌺', name: 'Flower' },
+            { emoji: '⭐', name: 'Star' },
+            { emoji: '🎨', name: 'Art' },
+            { emoji: '🎵', name: 'Music' },
+            { emoji: '📚', name: 'Book' }
+        ];
+
+        let originalSequence = [];
+        let userSequence = [];
+        let countdown = 5;
+        let recallTimer = 10;
+        let countdownInterval;
+        let flashInterval;
+        let recallInterval;
+        let currentRound = 1;
+        let totalRounds = 5;
+        let totalScore = 0;
+        let totalMistakes = 0;
+        let roundStats = [];
+        let startRecallTime = 0;
+        let roundTimes = [];
+
+        // Initialize game
+        function initGame() {
+            currentRound = 1;
+            totalScore = 0;
+            totalMistakes = 0;
+            roundStats = [];
+            roundTimes = [];
+            updateRoundDisplay();
+            startNewRound();
+        }
+
+        // Start a new round
+        function startNewRound() {
+            // Reset variables for this round
+            originalSequence = [];
+            userSequence = [];
+            countdown = 5;
+            recallTimer = 10;
+
+            // Select 4 random pictures
+            const shuffled = [...pictures].sort(() => Math.random() - 0.5).slice(0, 4);
+            originalSequence = shuffled;
+
+            // Show learning phase
+            showPhase('learningPhase');
+            startCountdown();
+        }
+
+        // Update round display
+        function updateRoundDisplay() {
+            document.getElementById('roundDisplay').textContent = currentRound + '/' + totalRounds;
+        }
+
+        // Show specific phase
+        function showPhase(phaseId) {
+            document.querySelectorAll('.game-phase').forEach(phase => {
+                phase.classList.remove('active');
+            });
+            document.getElementById(phaseId).classList.add('active');
+        }
+
+        // Start countdown
+        function startCountdown() {
+            countdown = 5;
+            document.getElementById('countdown').textContent = countdown;
+
+            countdownInterval = setInterval(() => {
+                countdown--;
+                document.getElementById('countdown').textContent = countdown;
+
+                if (countdown === 0) {
+                    clearInterval(countdownInterval);
+                    startLearningPhase();
+                }
+            }, 1000);
+        }
+
+        // Start learning phase
+        function startLearningPhase() {
+            const container = document.getElementById('flashCards');
+            container.innerHTML = '';
+
+            let index = 0;
+
+            flashInterval = setInterval(() => {
+                // Hide previous card
+                if (index > 0) {
+                    const previousCard = container.querySelector('[data-index="' + (index - 1) + '"]');
+                    if (previousCard) {
+                        previousCard.classList.remove('visible');
+                        previousCard.classList.add('hidden');
+                    }
+                }
+
+                if (index < originalSequence.length) {
+                    const picture = originalSequence[index];
+                    const card = document.createElement('div');
+                    card.className = 'flash-card visible';
+                    card.setAttribute('data-index', index);
+                    card.innerHTML = `
+                        <div class="flash-emoji">${picture.emoji}</div>
+                        <div class="flash-name">${picture.name}</div>
+                        <div class="sequence-indicator">Position: ${index + 1} of ${originalSequence.length}</div>
+                    `;
+                    container.appendChild(card);
+                    index++;
+                } else {
+                    clearInterval(flashInterval);
+                    startRecallPhase();
+                }
+            }, 2000);
+        }
+
+        // Start recall phase
+        function startRecallPhase() {
+            startRecallTime = Date.now();
+            showPhase('recallPhase');
+            displayOptionCards();
+            recallTimer = 10;
+            document.getElementById('recallTimer').textContent = recallTimer;
+            document.getElementById('recallTimer').style.color = '#FFD700';
+            document.getElementById('recallTimer').style.animation = 'pulse-timer 1s infinite';
+
+            recallInterval = setInterval(() => {
+                recallTimer--;
+                updateRecallTimer();
+
+                if (recallTimer < 0) {
+                    clearInterval(recallInterval);
+                    if (userSequence.length === 4) {
+                        checkAnswer();
+                    } else {
+                        document.getElementById('resultMessage').textContent = '⏰ Time\'s up! You selected ' + userSequence.length + '/4 cards.';
+                        document.getElementById('resultMessage').className = 'message show error';
+                        disableAllCards();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Update recall timer
+        function updateRecallTimer() {
+            document.getElementById('recallTimer').textContent = recallTimer;
+            
+            // Change color as time runs out
+            if (recallTimer <= 5) {
+                document.getElementById('recallTimer').style.color = '#ff6b6b';
+                document.getElementById('recallTimer').style.animation = 'pulse-timer 0.5s infinite';
+            }
+        }
+
+        // Disable all cards
+        function disableAllCards() {
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.disabled = true;
+            });
+            document.getElementById('submitBtn').disabled = true;
+        }
+
+        // Display option cards (shuffled)
+        function displayOptionCards() {
+            const container = document.getElementById('optionCards');
+            container.innerHTML = '';
+
+            // Shuffle the original sequence for options
+            const shuffledOptions = [...originalSequence].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach((picture, index) => {
+                const card = document.createElement('button');
+                card.className = 'option-card';
+                card.innerHTML = `
+                    <div class="option-emoji">${picture.emoji}</div>
+                    <div class="option-name">${picture.name}</div>
+                `;
+                card.onclick = () => selectCard(card, picture, index);
+                container.appendChild(card);
+            });
+        }
+
+        // Play sound effect when card is clicked
+        function playSelectSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioContext.currentTime;
+                
+                // Create a more noticeable click/pop sound
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                // Quick sweep from high to low for "pop" effect
+                oscillator.frequency.setValueAtTime(1200, now);
+                oscillator.frequency.exponentialRampToValueAtTime(400, now + 0.1);
+                oscillator.type = 'sine';
+                
+                // Volume envelope - quick attack and decay
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.1);
+            } catch (e) {
+                // If audio fails, just continue
+                console.log('Audio not available');
+            }
+        }
+
+        // Play success sound effect
+        function playSuccessSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioContext.currentTime;
+                
+                // Create two tones for success sound
+                const oscillator1 = audioContext.createOscillator();
+                const oscillator2 = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator1.connect(gain);
+                oscillator2.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                // First tone
+                oscillator1.frequency.value = 600;
+                oscillator1.type = 'sine';
+                
+                // Second tone (higher)
+                oscillator2.frequency.value = 800;
+                oscillator2.type = 'sine';
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                oscillator1.start(now);
+                oscillator1.stop(now + 0.15);
+                
+                oscillator2.start(now + 0.15);
+                oscillator2.stop(now + 0.3);
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        // Play error sound effect
+        function playErrorSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioContext.currentTime;
+                
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 300; // Lower frequency
+                oscillator.type = 'sine';
+                
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                oscillator.start(now);
+                oscillator.stop(now + 0.3);
+            } catch (e) {
+                console.log('Audio not available');
+            }
+        }
+
+        // Select card
+        function selectCard(cardElement, picture, index) {
+            if (cardElement.classList.contains('selected')) {
+                return; // Can't click already selected cards
+            }
+
+            // Play sound effect
+            playSelectSound();
+
+            // Add shake animation
+            cardElement.classList.add('shake');
+            setTimeout(() => {
+                cardElement.classList.remove('shake');
+            }, 300);
+
+            // Add to user sequence
+            userSequence.push(picture);
+            cardElement.classList.add('selected');
+            cardElement.classList.add('disabled');
+
+            // Update display
+            updateSequenceDisplay();
+
+            // Auto-submit when all 4 cards are selected
+            if (userSequence.length === 4) {
+                document.getElementById('submitBtn').disabled = false;
+                // Auto-check after a short delay for visual feedback
+                setTimeout(() => {
+                    checkAnswer();
+                }, 500);
+            }
+        }
+
+        // Update sequence display
+        function updateSequenceDisplay() {
+            const display = document.getElementById('sequenceDisplay');
+
+            if (userSequence.length === 0) {
+                display.innerHTML = '<span style="color: #999;">Click cards below to start...</span>';
+                return;
+            }
+
+            display.innerHTML = userSequence.map((item, index) => `
+                <div class="sequence-item">
+                    <div class="sequence-number">${index + 1}</div>
+                    ${item.emoji} ${item.name}
+                </div>
+            `).join('');
+        }
+
+        // Clear sequence
+        function clearSequence() {
+            if (recallTimer <= 0) return; // Can't clear if time's up
+            
+            userSequence = [];
+            document.getElementById('submitBtn').disabled = true;
+            updateSequenceDisplay();
+
+            // Reset all cards
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected', 'disabled');
+            });
+        }
+
+        // Try again - restart current round
+        function tryAgain() {
+            document.getElementById('tryAgainBtn').style.display = 'none';
+            document.getElementById('resultMessage').classList.remove('show');
+            startNewRound();
+        }
+
+        // Check answer
+        function checkAnswer() {
+            clearInterval(recallInterval);
+            
+            if (userSequence.length !== 4) {
+                return;
+            }
+
+            // Check if sequence matches
+            const isCorrect = userSequence.every((item, index) => 
+                item.emoji === originalSequence[index].emoji
+            );
+
+            if (isCorrect) {
+                playSuccessSound();
+                document.getElementById('resultMessage').textContent = '🎉 Perfect! You got the sequence right!';
+                document.getElementById('resultMessage').className = 'message show success';
+                document.getElementById('celebration').classList.add('show');
+                
+                // Calculate time taken
+                const timeTaken = ((Date.now() - startRecallTime) / 1000).toFixed(2);
+                roundTimes.push({
+                    round: currentRound,
+                    time: parseFloat(timeTaken)
+                });
+                
+                // Record round stats
+                totalScore += 100; // Add 100 points for correct sequence
+                roundStats.push({
+                    round: currentRound,
+                    correct: true,
+                    score: 100,
+                    timeTaken: parseFloat(timeTaken)
+                });
+
+                // Disable all buttons
+                document.querySelectorAll('.option-card').forEach(card => {
+                    card.disabled = true;
+                });
+                document.getElementById('submitBtn').disabled = true;
+
+                // After delay, proceed to next round or show final results
+                setTimeout(() => {
+                    if (currentRound < totalRounds) {
+                        // Update result phase before showing it
+                        document.getElementById('roundTitle').textContent = currentRound;
+                        document.getElementById('roundScore').textContent = '+100';
+                        document.getElementById('runningScore').textContent = totalScore;
+                        document.getElementById('roundTime').textContent = timeTaken + 's';
+                        showPhase('resultPhase');
+                    } else {
+                        showFinalResults();
+                    }
+                }, 2000);
+            } else {
+                playErrorSound();
+                document.getElementById('resultMessage').textContent = '❌ Oops! That\'s not the right sequence. Try again!';
+                document.getElementById('resultMessage').className = 'message show error';
+                
+                // Calculate time taken
+                const timeTaken = ((Date.now() - startRecallTime) / 1000).toFixed(2);
+                
+                // Record wrong attempt
+                totalMistakes++;
+                totalScore -= 25; // Penalty for wrong sequence
+                if (totalScore < 0) totalScore = 0;
+                
+                roundStats.push({
+                    round: currentRound,
+                    correct: false,
+                    score: -25,
+                    timeTaken: parseFloat(timeTaken)
+                });
+
+                // Show Try Again button after a short delay
+                setTimeout(() => {
+                    document.getElementById('tryAgainBtn').style.display = 'inline-block';
+                }, 1000);
+            }
+        }
+
+        // Proceed to next round
+        function proceedToNextRound() {
+            currentRound++;
+            updateRoundDisplay();
+            document.getElementById('celebration').classList.remove('show');
+            document.getElementById('resultMessage').classList.remove('show');
+            startNewRound();
+        }
+
+        // Show final results after 5 rounds
+        function showFinalResults() {
+            showPhase('finalResultsPhase');
+            document.getElementById('finalScore').textContent = totalScore;
+            document.getElementById('finalMistakes').textContent = totalMistakes;
+            document.getElementById('finalRounds').textContent = currentRound + '/5';
+            
+            // Calculate and display average time
+            if (roundStats.length > 0) {
+                const totalTime = roundStats.reduce((sum, stat) => sum + (stat.timeTaken || 0), 0);
+                const avgTime = (totalTime / roundStats.length).toFixed(2);
+                document.getElementById('finalAvgTime').textContent = avgTime + 's';
+                
+                // Display individual round times
+                const timesDisplay = document.getElementById('roundTimesDisplay');
+                timesDisplay.innerHTML = roundStats.map((stat, index) => `
+                    <div style="background: white; border: 2px solid #FFD700; border-radius: 10px; padding: 15px; text-align: center;">
+                        <p style="font-size: 0.9rem; color: #666; margin: 0;">Round ${stat.round}</p>
+                        <p style="font-size: 1.5rem; font-weight: bold; color: #000; margin: 8px 0 0 0;">${stat.timeTaken}s</p>
+                        <p style="font-size: 0.85rem; color: #FFD700; margin: 5px 0 0 0;">${stat.correct ? '✓ Correct' : '✗ Retry'}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Restart game
+        function restartGame() {
+            if (countdownInterval) clearInterval(countdownInterval);
+            if (flashInterval) clearInterval(flashInterval);
+            if (recallInterval) clearInterval(recallInterval);
+            initGame();
+        }
+
+        // Go home
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
